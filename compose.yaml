@@ -1,0 +1,24 @@
+services:
+  web:
+    build:
+      context: .
+      target: web
+    ports:
+      - "127.0.0.1:8080:8080"
+    restart: unless-stopped
+    read_only: true
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/', timeout=3).close()"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+  tests:
+    build:
+      context: .
+      target: tests
+    profiles: ["tests"]
+    network_mode: none
+    read_only: true
+    tmpfs:
+      - /tmp

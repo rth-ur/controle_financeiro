@@ -125,6 +125,46 @@ Acesse em `http://localhost:8080`.
 
 ## Testes
 
+### Docker: site e testes
+
+Com Docker Desktop aberto, inicie o site:
+
+```bash
+docker compose up -d --build --wait web
+```
+
+Acesse http://localhost:8080. O servidor fica em segundo plano, com verificação
+de saúde e reinício automático enquanto o Docker estiver funcionando.
+Use `docker compose ps` para conferir, `docker compose logs -f web` para os logs
+e `docker compose stop web` para parar. Após editar o site, repita o comando
+com `--build`. Chart.js, Supabase e cotações mantêm as dependências externas
+da aplicação; os testes usam simulações e funcionam sem rede.
+
+### Pytest
+
+Com Docker Desktop aberto, execute as duas suítes em um ambiente isolado:
+
+```bash
+docker compose run --build --rm tests
+```
+
+A primeira construção baixa as dependências; a execução dos testes não usa rede.
+
+Para apresentar nesta máquina Windows, execute `.\apresentar-testes.cmd`.
+Veja o roteiro e as explicações em [APRESENTACAO.md](APRESENTACAO.md).
+
+Requisitos: Python 3.10+ e Node.js 20+ no PATH. O pytest executa o JavaScript
+real da aplicação com um ambiente simulado, sem acessar Supabase ou AwesomeAPI.
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest -v
+```
+
+A suíte cobre saldo, receitas e despesas, formatação em reais, persistência
+local e conversão de moedas (incluindo valores inválidos). Os testes não
+substituem testes visuais em um navegador. Também são executados no GitHub Actions.
+
 Os testes validam a integração com a API de câmbio (AwesomeAPI):
 
 ```bash

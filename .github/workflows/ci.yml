@@ -21,6 +21,16 @@ jobs:
       - name: Rodar testes
         run: node tests/api.tests.js
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar pytest
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Rodar pytest
+        run: python -m pytest -v
+
   deploy:
     name: Deploy no GitHub Pages
     runs-on: ubuntu-latest

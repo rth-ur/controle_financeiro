@@ -1,0 +1,77 @@
+FINTRACK - COMANDOS PARA APRESENTAR OS TESTES
+
+Abra o Docker Desktop e espere aparecer que o mecanismo esta funcionando.
+No VS Code, abra Terminal > Novo Terminal e escolha PowerShell.
+Copie somente os comandos abaixo, uma linha por vez, e pressione Enter.
+
+1. ENTRAR NA PASTA DO PROJETO
+
+Set-Location "D:\GitHub\controle_financeiro"
+
+2. RODAR A APRESENTACAO COMPLETA (COM A IMAGEM JA PREPARADA)
+
+Para ligar o site no Docker (endereco http://localhost:8080):
+
+docker compose up -d --build --wait web
+
+Para verificar se esta funcionando:
+
+docker compose ps
+
+Para acompanhar o servidor (Ctrl+C sai dos logs e mantem o site ligado):
+
+docker compose logs -f web
+
+Para desligar o site:
+
+docker compose stop web
+
+Para executar os testes:
+
+docker compose run --rm tests
+
+Resultado esperado: 16 casos pytest passaram e 5 testes JavaScript passaram.
+Os testes usam dependencias simuladas; nao acessam o banco ou a API real.
+Depois que a imagem esta pronta, esta execucao nao precisa de internet.
+
+3. SE ALTERAR O CODIGO OU ESTIVER PREPARANDO OUTRO COMPUTADOR
+
+docker compose run --build --rm tests
+
+A primeira construcao precisa de internet. Faca isso antes da apresentacao.
+
+4. PARA MOSTRAR SOMENTE OS 16 CASOS PYTEST
+
+docker compose run --rm tests python -m pytest -v -p no:cacheprovider
+
+5. PARA MOSTRAR SOMENTE OS 4 CASOS DE SALDO
+
+docker compose run --rm tests python -m pytest -v -p no:cacheprovider -k totals
+
+6. PARA MOSTRAR SOMENTE OS 8 CASOS DO CONVERSOR
+
+docker compose run --rm tests python -m pytest -v -p no:cacheprovider -k converter
+
+ALTERNATIVA SEM DOCKER, NESTA MAQUINA
+
+Set-Location "D:\GitHub\controle_financeiro"
+.\.venv\Scripts\python.exe -m pytest -v
+
+SE DER ERRO
+
+- Erro de conexao com Docker: abra o Docker Desktop e espere iniciar.
+- "no configuration file provided": execute o comando do passo 1.
+- Imagem ausente ou codigo desatualizado: execute o passo 3.
+- Se continuar falhando, copie o texto completo do erro.
+
+EXPLICACAO RAPIDA
+
+O pytest organiza os cenarios em Python. O Node.js executa as funcoes reais
+do JavaScript. O assert compara o resultado obtido com o resultado esperado.
+Exemplo: receita de 1000 menos despesa de 250 deve produzir saldo de 750.
+O parametrize executa a mesma funcao com varias entradas: quatro funcoes
+de teste geram 16 casos. O Docker prepara o ambiente com as dependencias.
+Esta suite verifica logica com ambiente simulado; nao verifica cliques,
+aparencia ou integracao real com Supabase e AwesomeAPI.
+
+Roteiro detalhado: APRESENTACAO.md.
